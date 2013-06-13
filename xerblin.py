@@ -3,7 +3,7 @@
 #
 #    Copyright © 2013 Simon Forman
 #
-#    This file is Xerblin.
+#    This file is part of Xerblin.
 #
 #    Xerblin is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by

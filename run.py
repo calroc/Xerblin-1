@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#    Copyright © 2012 Simon Forman
+#    Copyright © 2012, 2013 Simon Forman
 #
 #    This file is part of Xerblin
 #
