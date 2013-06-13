@@ -79,6 +79,10 @@ def x(environ, start_response):
     start_response('200 OK', [('Content-type', 'text/html')])
     return open('templates/index.html')
 
+  if path == ['foo']:
+    start_response('200 OK', [('Content-type', 'text/html')])
+    return open('templates/inbrowser.html')
+
   if path == ['step']:
     form_data = get_form_values(environ)
     command = form_data.get('command', [''])[0]
