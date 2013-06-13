@@ -14,7 +14,7 @@ the Free Software Foundation, either version 3 of the License, or
 
 ## Summary
 
-Xerblin is a simple conceptual system for reasoning about automated behavior.  It has been implemented in Python and Javascript and this software package provides a simple WSGI server that serves live interactive Xerblin interpreters.
+Xerblin is a simple conceptual system for reasoning about automated behavior.  It has been implemented in Python and Javascript and this software package contains a simple WSGI server that serves live interactive Xerblin interpreters.
 
 Xerblin provides a single metaphor for interacting with computers that is simple enough to teach to children yet provides facilities that are useful to programmers. It integrates all levels of software from the desktop to assembly language.
 
