@@ -19,11 +19,14 @@
 #    along with Xerblin.  If not, see <http://www.gnu.org/licenses/>.
 #
 '''
-Run the Flask server with a World that stores its history in a git repo.
+Run the WSGI server with a World that stores its history in a git repo.
 '''
+import pickle
+import logging
+import sys
+from os import makedirs
 from os.path import expanduser, exists, join
 from argparse import ArgumentParser
-import pickle, logging, sys
 from dulwich.repo import Repo, NotGitRepository
 from xerblin import World, items
 import wsgiable
@@ -115,7 +118,18 @@ args = parser.parse_args()
 
 if not exists(args.roost):
   print "Roost directory %r doesn't exist!" % (args.roost,)
-  sys.exit(2)
+  if args.init or 'y' == raw_input('Create it (y/n)?').lower().strip():
+    try:
+      makedirs(args.roost)
+    except OSError, e:
+      print >> sys.stderr, 'Failed to create', args.roost
+      print >> sys.stderr, e.strerror
+      sys.exit(e.errno)
+    else:
+      print 'Created', args.roost
+      args.init = True
+  else:
+    sys.exit(0)
 
 
 # Initialize the "roost" directory if requested.
