@@ -26,6 +26,7 @@ from argparse import ArgumentParser
 import pickle, logging, sys
 from dulwich.repo import Repo, NotGitRepository
 from xerblin import World, items
+import wsgiable
 
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -160,6 +161,6 @@ w = CommitWorld(
   )
 
 
-import main
-main.W = w
-main.app.run(debug=True)
+wsgiable.W = w
+print "Serving on port 8000..."
+wsgiable.run()

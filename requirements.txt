@@ -1,2 +1,1 @@
-Flask==0.9
 dulwich==0.8.7

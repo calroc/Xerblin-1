@@ -1,3 +1,23 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+#    Copyright © 2013 Simon Forman
+#
+#    This file is part of Xerblin.
+#
+#    Xerblin is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    Xerblin is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with Xerblin.  If not, see <http://www.gnu.org/licenses/>.
+#
 from sys import stderr
 from traceback import format_exc
 from types import FunctionType
@@ -84,7 +104,11 @@ def x(environ, start_response):
   return ["D'oh! 501 Not Implemented ", repr(environ['PATH_INFO'])]
 
 
-if __name__ == '__main__':
-  httpd = make_server('', 8000, x)
-  print "Serving on port 8000..."
+def run(app=x, host='', port=8000):
+  httpd = make_server(host, port, app)
   httpd.serve_forever()
+
+
+if __name__ == '__main__':
+  print "Serving on port 8000..."
+  run()
