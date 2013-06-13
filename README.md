@@ -26,14 +26,14 @@ With a rich set of basic commands and the three kinds of compound commands you h
 
 ## Installation
 
-I use virtualenv and pip on an Ubuntu Linux system and installation from GitHub is straightforward:
+I use virtualenv and pip on an Ubuntu Linux system and installation from GitHub is straightforward.  The only dependency is Dulwich (a Git library) and I've included a copy of v0.9.0 which will be used by the pip command below:
 
 
     sforman@callix:~$ git clone git@github.com:PhoenixBureau/Xerblin.git
     sforman@callix:~$ virtualenv virt-env
     sforman@callix:~$ source ./virt-env/bin/activate
     (virt-env)sforman@callix:~$ cd Xerblin/
-    (virt-env)sforman@callix:~/Xerblin$ pip install -r requirements.txt
+    (virt-env)sforman@callix:~/Xerblin$ pip install --no-index -f file:/`pwd` -r requirements.txt
 
     ...snip...
 
@@ -50,15 +50,15 @@ Or, if you prefer all the commands by themselves in a script:
     virtualenv virt-env
     source ./virt-env/bin/activate
     cd Xerblin/
-    pip install -r requirements.txt
+    pip install --no-index -f file:/`pwd` -r requirements.txt
     python main.py
 
 
 ### Three Xerblins
 
-There are *two* entry points to the server, `main.py` which runs a Xerblin interpreter in the server but does _not_ store the history to disk, and `run.py` which _does_ store history to disk and uses the Dulwich git library to store the history in a git repository.
+There are *two* entry points to the server, `wsgiable.py` which runs a Xerblin interpreter in the server but does _not_ store the history to disk, and `run.py` which _does_ store history to disk and uses the Dulwich git library to store the history in a git repository.
 
-If you start either version a Flask server is created that serves two versions of a webpage that contains an interface to a Xerblin interpreter
+If you start either version a WSGI server is created that serves two versions of a webpage that contains an interface to a Xerblin interpreter
 
 *  The "root" URL ('/') serves a self-contained webpage (dependencies are loaded from a CDN) that has the interpreter in Javascript.  You can save this page and edit it to play with a one-page web-based Xerblin.
 * The `/foo` URL serves a varient of the same page that connects (with AJAX) to the server-based Python Xerblin interpreter, which allows the webpage to serve as an interface to it.
