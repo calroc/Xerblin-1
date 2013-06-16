@@ -27,6 +27,7 @@ import sys
 from os import makedirs
 from os.path import expanduser, exists, join
 from argparse import ArgumentParser
+sys.path.insert(0, './dulwich-0.9.0.zip/dulwich-0.9.0')
 from dulwich.repo import Repo, NotGitRepository
 from xerblin import World, items
 import wsgiable
