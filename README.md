@@ -58,7 +58,7 @@ If you start either version a WSGI server is created that serves two versions of
 
 <table>
     <thead>
-        <td></td><td> /foo </td><td> / </td>
+        <td></td><td> / </td><td> /foo </td>
     </thead>
     <tr>
         <td>wsgiable.py</td><td>Server-Side Python</td><td>In-Browser Javascript</td>
