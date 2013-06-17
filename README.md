@@ -61,7 +61,7 @@ If you start either version a WSGI server is created that serves two versions of
         <td></td><td> /foo </td><td> / </td>
     </thead>
     <tr>
-        <td>main.py</td><td>Server-Side Python</td><td>In-Browser Javascript</td>
+        <td>wsgiable.py</td><td>Server-Side Python</td><td>In-Browser Javascript</td>
     </tr>
     <tr>
         <td>run.py</td><td>Server-Side Python with Git History</td><td>In-Browser Javascript</td>
