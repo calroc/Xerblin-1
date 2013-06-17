@@ -37,37 +37,18 @@ With a rich set of basic commands and the three kinds of compound commands you h
 
 ## Installation
 
-I use virtualenv and pip on an Ubuntu Linux system and installation from GitHub is straightforward.  The only dependency is Dulwich (a Git library) and I've included a copy of v0.9.0 which will be used by the pip command below:
+The Xerblin system doesn't really require installation. The only dependency is Dulwich (a pure-Python Git library) and I've included a copy of v0.9.0 which will be used by the `run.py` script (via Python `zipimport` facility) so once you have cloned the repo you can just start the server:
 
 
     sforman@callix:~$ git clone git@github.com:PhoenixBureau/Xerblin.git
-    sforman@callix:~$ virtualenv virt-env
-    sforman@callix:~$ source ./virt-env/bin/activate
     (virt-env)sforman@callix:~$ cd Xerblin/
-    (virt-env)sforman@callix:~/Xerblin$ pip install --no-index -f file:/`pwd` -r requirements.txt
-
-    ...snip...
-
-    Successfully installed Flask dulwich Werkzeug Jinja2
-    Cleaning up...
-    (virt-env)sforman@callix:~/Xerblin$ python main.py
-     * Running on http://127.0.0.1:5000/
-     * Restarting with reloader
-
-
-Or, if you prefer all the commands by themselves in a script:
-
-    git clone git@github.com:PhoenixBureau/Xerblin.git
-    virtualenv virt-env
-    source ./virt-env/bin/activate
-    cd Xerblin/
-    pip install --no-index -f file:/`pwd` -r requirements.txt
-    python main.py
+    (virt-env)sforman@callix:~/Xerblin$ ./wsgiable.py
+    Serving on port 8000...
 
 
 ### Three Xerblins
 
-There are *two* entry points to the server, `wsgiable.py` which runs a Xerblin interpreter in the server but does _not_ store the history to disk, and `run.py` which _does_ store history to disk and uses the Dulwich git library to store the history in a git repository.
+There are *two* entry points to the server, `wsgiable.py` which runs a Xerblin interpreter in the server but does _not_ store the history to disk, and `run.py` which _does_ store history to disk and uses the Dulwich git library to store the history in the git repository.
 
 If you start either version a WSGI server is created that serves two versions of a webpage that contains an interface to a Xerblin interpreter
 
@@ -88,23 +69,7 @@ If you start either version a WSGI server is created that serves two versions of
 </table>
 
 
-If you use the `run.py` entry point you can tell it which directory to use. The _first_ time you run the server with the git history store you must use the `--init` switch, after that you must leave it off. (I know that's a little clumsy, I may change it in the future.)
-
-Here is the output of the `-h` switch which shows the command line options for the `run.py` server entry point:
-
-    usage: run.py [-h] [-r ROOST] [-i]
-    
-    optional arguments:
-      -h, --help            show this help message and exit
-      -r ROOST, --roost ROOST
-                            Use this directory as home for the Pigeon system.
-                            (default: $HOME/.pigeon). (I apologize for the
-                            terrible pun.)
-      -i, --init            Initialize the "roost" directory with git repo and
-                            system.pickle.
-
-
-Run it once the first time with the `--init` option, after that you leave it off.  It starts a Flask server and you can open a browser window and interact with it.  If you use the same "roost" directory it will reload the last saved state when you restart the server.  Each time you issue a command to the interpreter it will save the state (this is per command line, not per command _in_ the command line.)
+If you use the `run.py` entry point it uses the local repo to store system state. You will soon be able to clone the system to another directory to make additional copies or just create branches.
 
 Basically this gives you an on-disk persistent data structure that captures the entire history of your interaction with the interpreter.  Soon I will implement ways to "cherry pick" data and commands from past history so you can build new interpreter state that contains just the data and commands you want for a particular task.
 
