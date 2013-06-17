@@ -44,7 +44,8 @@ def make_commit_thing(path, files):
     raise ValueError("%r isn't a repository!" % (path,))
 
   # Note that we bind the args as defaults rather than via a closure so
-  # you can override them later if you want.
+  # you can override them later if you want.  (Technically, binding the
+  # values as defaults IS a type of closure, but you know what I mean!)
   def commit(files=files, repo=repo, log=log):
     repo.stage(files)
     commit_sha = repo.do_commit('autosave')

@@ -58,11 +58,13 @@ except IOError, e:
 
 # Create a commit_thing to let us save our state to the git repo after
 # changes.
-commit_thing = make_commit_thing(getcwd(), [SYSTEM_PICKLE])
+try:
+  commit_thing = make_commit_thing(getcwd(), [SYSTEM_PICKLE])
+except ValueError, e:
+  print e
+  sys.exit(2)
 
 
-# Now that the config_file has had a chance to do its thing, import the
-# system and run.
 w = CommitWorld(
   initial=state,
   save_file=SYSTEM_PICKLE,
