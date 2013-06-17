@@ -95,14 +95,21 @@ def x(environ, start_response):
 
     start_response('200 OK', [('Content-type', 'application/json')])
     return result
-  
 
   if len(path) == 2 and path[0] == 'static':
     fn = environ['PATH_INFO'].lstrip('/')
-    if exists(fn) and  fn.endswith('.js'):
-      start_response('200 OK', [('Content-type', 'application/javascript')])
-      return open(fn)
-  
+    if exists(fn):
+      if fn.endswith('.js'):
+        mime_type = 'application/javascript'
+      elif fn.endswith('.css'):
+        mime_type = 'text/css'
+      elif fn.endswith('.png'):
+        mime_type = 'image/png'
+      else:
+        raise ValueError("We don't server your kind around here! %r" % (fn,))
+    start_response('200 OK', [('Content-type', mime_type)])
+    return open(fn)
+ 
   print >> stderr, path
   start_response('501 Not Implemented', [('Content-type', 'text/plain')])
   return ["D'oh! 501 Not Implemented ", repr(environ['PATH_INFO'])]
