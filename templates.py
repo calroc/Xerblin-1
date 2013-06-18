@@ -46,7 +46,7 @@ def stack_item(c, item):
   elif callable(item):
     c.li(item.__name__ + '()')
   elif isinstance(item, tuple):
-    t = c.ul
+    t = c.li.ul
     for i in item:
       stack_item(t, i)
   else:
