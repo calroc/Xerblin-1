@@ -1,0 +1,50 @@
+@import url(http://fonts.googleapis.com/css?family=Cutive|Oxygen:400,700);
+
+body {
+    line-height: 1.5;
+    font-family: 'Oxygen', serif;
+    color: #333333;
+}
+
+h1, h2, h3, h4, h5, h6, .heavy {
+	font-family: 'Cutive', sans-serif;
+	font-weight: bold;
+}
+
+#container {
+  border: 1px dashed gray;
+  padding-left: 2em;
+}
+
+#commande, #meta_controls {
+  display: inline;
+}
+
+#commande {
+  width: 38%;
+}
+
+form {
+  padding: 1em;
+  margin: 0.5em;
+}
+
+#docs {
+/*
+  font-family: 'Cutive',sans-serif;
+  max-width: 33em;
+  margin-left: 5em;
+*/
+}
+#docs ul {
+  border: none;
+  margin-left: 2em;
+}
+
+#container ul {
+  border: 1px dashed gray;
+  padding: 3px;
+  margin: 3px;
+}
+
+
