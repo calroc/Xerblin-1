@@ -8,6 +8,7 @@
 <script src="./static/jquery.min.js"></script>
 <script src="./static/jquery-ui-1.9.2.custom.min.js"></script>
 <link rel="stylesheet" href="./static/jquery-ui-1.9.2.custom.min.css" />
+<script src="./static/render_stack.js"></script>
 <script src="./static/xerblin.js"></script>
 <script>
 /*
@@ -67,40 +68,11 @@ var history_list = [], ns = {};
 $(function() {
 
 
-//#######################################################################
-//  Render Stack.
-//#######################################################################
 function bar() {
   var n = history_list.length;
   var sd = $('#stack_display');
   sd.contents().remove();
-  stack_item(history_list[n - 1], sd);
-}
-
-function stack_item(stack, list) {
-  if (stack.length == 0) { return; };
-  display_item(stack[0], list);
-  stack_item(stack[1], list);
-}
-
-function display_item(item, list) {
-  if (_.isArray(item)) {
-    var li = $('<li></li>');
-    list.append(li);
-    display_array(item, li);
-  } else if (_.isString(item)) {
-    list.append('<li>&quot;' + item + '&quot;');
-  } else if (_.isObject(item) && !_.isUndefined(item.name)) {
-    list.append('<li>' + item.name + '()');
-  } else {
-    list.append('<li>' + item);
-  }
-}
-
-function display_array(A, list) {
-  var d = $('<ul></ul>');
-  _.each(A, function(item) { return display_item(item, d); });
-  list.append(d);
+  render_stack(history_list[n - 1], sd);
 }
 
 
