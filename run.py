@@ -25,7 +25,7 @@ from pickle import Unpickler
 from os import getcwd
 import logging
 import sys
-from xerblin import World, items
+from xerblin import World
 from gitty import CommitWorldMixin, make_commit_thing
 import wsgiable
 
