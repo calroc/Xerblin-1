@@ -61,7 +61,7 @@ def get_session(environ):
 
 
 def get_form_values(environ):
-  size = int(environ.get('CONTENT_LENGTH', 0))
+  size = int(environ.get('CONTENT_LENGTH') or 0)
   data = environ['wsgi.input'].read(size)
   return parse_qs(data)
 
