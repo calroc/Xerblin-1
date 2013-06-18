@@ -1,3 +1,27 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# The interface of this HTML generation class is pretty directly based on
+# https://pypi.python.org/pypi/html but it uses ElementTree to render the
+# HTML output.
+#
+#    Copyright © 2013 Simon Forman
+#
+#    This file is part of Xerblin.
+#
+#    Xerblin is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    Xerblin is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with Xerblin.  If not, see <http://www.gnu.org/licenses/>.
+#
 from xml.etree.ElementTree import Element, SubElement, tostring
 
 

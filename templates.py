@@ -1,4 +1,24 @@
-from xerblin import items, ROOT
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+#    Copyright © 2013 Simon Forman
+#
+#    This file is part of Xerblin.
+#
+#    Xerblin is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    Xerblin is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with Xerblin.  If not, see <http://www.gnu.org/licenses/>.
+#
+from xerblin import items
 from html import HTML
 
 
@@ -40,9 +60,7 @@ def display_interpreter(c, (stack, dictionary)):
   with c.div(style='float:right;max-width:68%') as d:
     d.h3('Dictionary of Commands')
     D(d.div, (name for name, value in items(dictionary)))
-
   c.div(style='clear:both')
-
   with c.div as d:
     d.h3('Interpreter')
     with d.form(action='/step', method='POST') as f:
@@ -63,6 +81,7 @@ def render(interpreter):
 
 
 if __name__ == '__main__':
+  from xerblin import ROOT
   s = (23, ('34', ((abs, 2, '3'), (88, ()))))
   I = s, ROOT[1]
-  print >> open('a.html', 'w'), render(I)
+  print render(I)

@@ -51,6 +51,10 @@ def step(command, environ):
   w.step(command.split())
 
 
+def err500(start_response):
+  start_response('500 Internal Server Error', [('Content-type', 'text/plain')])
+  return [format_exc()]
+
 def x(environ, start_response):
   path = environ['PATH_INFO'].lstrip('/').split('/', 1)
 
@@ -58,14 +62,9 @@ def x(environ, start_response):
     try:
       I = get_session(environ).getCurrentState()
     except:
-      start_response('500 Internal Server Error', [('Content-type', 'text/plain')])
-      return [format_exc()]
+      return err500(start_response)
     start_response('200 OK', [('Content-type', 'text/html')])
     return render(I)
-
-  if path == ['foo']:
-    start_response('200 OK', [('Content-type', 'text/html')])
-    return open('templates/inbrowser.html')
 
   if path == ['step']:
     form_data = get_form_values(environ)
@@ -73,22 +72,17 @@ def x(environ, start_response):
     try:
       step(command, environ)
     except:
-      start_response('500 Internal Server Error', [('Content-type', 'text/plain')])
-      return [format_exc()]
-
+      return err500(start_response)
     start_response('301 Redirect', [('Location', '/'),])
     return []
 
   if len(path) == 2 and path[0] == 'static':
     fn = environ['PATH_INFO'].lstrip('/')
-    if exists(fn):
-      if fn.endswith('.css'):
-        mime_type = 'text/css'
-      else:
-        raise ValueError("We don't server your kind around here! %r" % (fn,))
-    start_response('200 OK', [('Content-type', mime_type)])
-    return open(fn)
- 
+    if exists(fn) and fn.endswith('.css'):
+      start_response('200 OK', [('Content-type', 'text/css')])
+      return open(fn)
+    raise ValueError("We don't server your kind around here! %r" % (fn,))
+
   print >> stderr, path
   start_response('501 Not Implemented', [('Content-type', 'text/plain')])
   return ["D'oh! 501 Not Implemented ", repr(environ['PATH_INFO'])]
