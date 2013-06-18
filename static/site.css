@@ -25,26 +25,17 @@ h1, h2, h3, h4, h5, h6, .heavy {
 }
 
 form {
-  padding: 1em;
-  margin: 0.5em;
+  margin-left: 5px;
 }
 
-#docs {
-/*
-  font-family: 'Cutive',sans-serif;
-  max-width: 33em;
-  margin-left: 5em;
-*/
-}
-#docs ul {
-  border: none;
-  margin-left: 2em;
+form.dictionary_word {
+  display: inline-block;
 }
 
-#container ul {
+ul {
   border: 1px dashed gray;
   padding: 3px;
-  margin: 3px;
+  margin: 0.25em;
 }
 
 
