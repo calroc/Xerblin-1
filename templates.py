@@ -22,8 +22,8 @@ from xerblin import items
 from html import HTML
 
 
-def D(c, names):
-  for name in names:
+def D(c, dictionary):
+  for name, value in items(dictionary):
     with c.form(
       id_=name + '_form',
       action='/step',
@@ -54,14 +54,14 @@ def stack_item(c, item):
 
 
 def display_interpreter(c, (stack, dictionary)):
-  with c.div(style='float:left') as s:
+  with c.div(id_='stack') as s:
     s.h3('Stack of Data')
     S(s.ul, stack)
-  with c.div(style='float:right;max-width:68%') as d:
+  with c.div(id_='dictionary') as d:
     d.h3('Dictionary of Commands')
-    D(d.div, (name for name, value in items(dictionary)))
+    D(d.div, dictionary)
   c.div(style='clear:both')
-  with c.div as d:
+  with c.div(id_='interpreter') as d:
     d.h3('Interpreter')
     with d.form(action='/step', method='POST') as f:
       f.input(name='command', type_='text')
