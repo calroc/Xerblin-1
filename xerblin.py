@@ -829,7 +829,7 @@ class World(object):
         # of cache on the contents of the serializer pickle stream.  (The
         # Pickler object's memo dict essentially keeps this cache for us
         # but I don't want to introduce a bunch of tight coupling with
-        # the pickle medule, despite the fact that it is likely to be
+        # the pickle module, despite the fact that it is likely to be
         # pretty stable.)
         self.serializer.post(command, I)
 

@@ -51,9 +51,10 @@ def step(command, environ):
   w.step(command.split())
 
 
-def err500(start_response):
+def err500(start_response, message):
   start_response('500 Internal Server Error', [('Content-type', 'text/plain')])
-  return [format_exc()]
+  return [message]
+
 
 def x(environ, start_response):
   path = environ['PATH_INFO'].lstrip('/').split('/', 1)
@@ -62,7 +63,7 @@ def x(environ, start_response):
     try:
       I = get_session(environ).getCurrentState()
     except:
-      return err500(start_response)
+      return err500(start_response, format_exc())
     start_response('200 OK', [('Content-type', 'text/html')])
     return render(I)
 
@@ -72,7 +73,7 @@ def x(environ, start_response):
     try:
       step(command, environ)
     except:
-      return err500(start_response)
+      return err500(start_response, format_exc())
     start_response('301 Redirect', [('Location', '/'),])
     return []
 
@@ -94,5 +95,6 @@ def run(app=x, host='', port=8000):
 
 
 if __name__ == '__main__':
-  print "Serving on port 8000..."
+  print "Serving on port http://localhost:8000/ ..."
   run()
+

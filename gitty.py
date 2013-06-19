@@ -52,3 +52,4 @@ def make_commit_thing(path, files):
     log.info('commit %s', commit_sha)
 
   return commit
+

@@ -50,8 +50,6 @@ The Xerblin system doesn't really require installation. The only dependency is D
 
 There are *two* entry points to the server, `wsgiable.py` which runs a Xerblin interpreter in the server but does _not_ store the history to disk, and `run.py` which _does_ store history to disk and uses the Dulwich git library to store the history in the git repository.
 
-If you start either version a WSGI server is created that serves two versions of a webpage that contains an interface to a Xerblin interpreter
-
 If you use the `run.py` entry point it uses the local repo to store system state. You will soon be able to clone the system to another directory to make additional copies, or create branches.
 
 Basically this gives you an on-disk persistent data structure that captures the entire history of your interaction with the interpreter.  Soon I will implement ways to "cherry pick" data and commands from past history so you can build new interpreter state that contains just the data and commands you want for a particular task.
@@ -102,7 +100,4 @@ I need to expand on each of these eventually.
 [d]: https://en.wikipedia.org/wiki/James_Martin_%28author%29 "Dr. Martin on Wikipedia"
 [e]: http://www.oxfordmartin.ox.ac.uk/founder/
 [f]: http://www.jamesmartin.com/
-
-
-
 
