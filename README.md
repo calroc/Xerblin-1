@@ -30,7 +30,7 @@ In addition to the above three UI elements there are discrete commands that prov
 *    Loop - do something over again.
 *    Branch - do one thing or another.
 
-Using the above three relations compound commands can be composed to perform more involved tasks using the built-in or user-provided "primitives" and other compound commands.  Composition can be done by program, by command line, in the GUI using the mouse and keyboard, or by means of parsing languages.
+Using the above three relations you can compose compound commands to perform more involved tasks with the built-in or user-provided "primitive" commands and other compound commands.  Composition can be done by program, by command line, in the GUI using the mouse and keyboard, or by means of parsing languages.
 
 With a rich set of basic commands and the three kinds of compound commands you have a completely general computer interface that allows for customization and flexibility and can be easily understood and mastered by the average user.
 
@@ -46,30 +46,13 @@ The Xerblin system doesn't really require installation. The only dependency is D
     Serving on port 8000...
 
 
-### Three Xerblins
+### Persistent Xerblin
 
 There are *two* entry points to the server, `wsgiable.py` which runs a Xerblin interpreter in the server but does _not_ store the history to disk, and `run.py` which _does_ store history to disk and uses the Dulwich git library to store the history in the git repository.
 
 If you start either version a WSGI server is created that serves two versions of a webpage that contains an interface to a Xerblin interpreter
 
-*  The "root" URL ('/') serves a self-contained webpage (dependencies are loaded from a CDN) that has the interpreter in Javascript.  You can save this page and edit it to play with a one-page web-based Xerblin.
-* The `/foo` URL serves a varient of the same page that connects (with AJAX) to the server-based Python Xerblin interpreter, which allows the webpage to serve as an interface to it.
-
-
-<table>
-    <thead>
-        <td></td><td> / </td><td> /foo </td>
-    </thead>
-    <tr>
-        <td>wsgiable.py</td><td>Server-Side Python</td><td>In-Browser Javascript</td>
-    </tr>
-    <tr>
-        <td>run.py</td><td>Server-Side Python with Git History</td><td>In-Browser Javascript</td>
-    </tr>
-</table>
-
-
-If you use the `run.py` entry point it uses the local repo to store system state. You will soon be able to clone the system to another directory to make additional copies or just create branches.
+If you use the `run.py` entry point it uses the local repo to store system state. You will soon be able to clone the system to another directory to make additional copies, or create branches.
 
 Basically this gives you an on-disk persistent data structure that captures the entire history of your interaction with the interpreter.  Soon I will implement ways to "cherry pick" data and commands from past history so you can build new interpreter state that contains just the data and commands you want for a particular task.
 
