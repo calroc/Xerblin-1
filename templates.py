@@ -18,8 +18,15 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Xerblin.  If not, see <http://www.gnu.org/licenses/>.
 #
-from xerblin import items
+from xerblin import items, get
 from html import HTML
+
+
+def key_get(dictionary, key, default=None):
+  try:
+    return get(dictionary, key)
+  except KeyError:
+    return default
 
 
 def D(c, dictionary):
@@ -70,18 +77,20 @@ def display_interpreter(c, (stack, dictionary)):
 
 def render(interpreter):
   ht = HTML()
+  title = key_get(interpreter[1], 'title', 'A Title')
   with ht.head as h:
-    h.title('Xerblin Demo Page')
+    h.title(title)
     h.meta(charset='utf-8')
     h.link(rel='stylesheet', href='./static/site.css')
   with ht.body as b:
-    b.h1('Xerblin')
+    b.h1(title)
     display_interpreter(b, interpreter)
   return ht
 
 
 if __name__ == '__main__':
-  from xerblin import ROOT
+  from xerblin import ROOT, insert
+  d = insert(ROOT[1], 'title', 'DeltaBot Demo Page')
   s = (23, ('34', ((abs, 2, '3'), (88, ()))))
-  I = s, ROOT[1]
+  I = s, d
   print render(I)
