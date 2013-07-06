@@ -82,6 +82,7 @@ def render(interpreter):
     h.title(title)
     h.meta(charset='utf-8')
     h.link(rel='stylesheet', href='./static/site.css')
+    h.script(src='/static/d3.v3.js', charset='utf-8')
   with ht.body as b:
     b.h1(title)
     display_interpreter(b, interpreter)
