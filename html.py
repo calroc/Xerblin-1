@@ -22,7 +22,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Xerblin.  If not, see <http://www.gnu.org/licenses/>.
 #
-from xml.etree.ElementTree import Element, SubElement, tostring
+from xml.etree.ElementTree import Element, SubElement, tostringlist
 
 
 class HTML(object):
@@ -56,11 +56,12 @@ class HTML(object):
         elif isinstance(other, Element):
             to.append(other)
         elif isinstance(other, HTML):
-            if other.root == self.root:
-                raise ValueError('What are you doing?', other)
-            to.append(other.current)
+            if other.root is self.root:
+                raise ValueError('What are you doing? No recursive HTML.')
+            to.append(other.element)
         else:
-            raise ValueError('Must only add strings or Elements', other)
+            raise ValueError('Must only add strings or Elements not %r'
+                             % (other,))
         return self
 
     def __call__(self, *content, **kw):
@@ -79,16 +80,16 @@ class HTML(object):
         return '<HTML:%r 0x%x>' % (self.element, id(self))
 
     def _stringify(self, encoding='us-ascii'):
-        return tostring(self.element, method='html', encoding=encoding)
+        return tostringlist(self.element, method='html', encoding=encoding)
 
     def __str__(self):
-        return self._stringify()
+        return ''.join(self._stringify())
 
     def __unicode__(self):
-        return unicode(self._stringify('UTF-8')) # Dur...
+        return u''.join(self._stringify('UTF-8'))
 
     def __iter__(self):
-        return iter([str(self)])
+        return iter(self._stringify())
 
 
 if __name__ == '__main__':
