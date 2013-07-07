@@ -76,6 +76,12 @@ def display_interpreter(c, (stack, dictionary)):
 
 
 def use_js(h):
+  data = [
+    {'x': 23, 'y': 18},
+    {'x': 99, 'y': 18},
+    {'x': 23, 'y': 28},
+    {'x': 99, 'y': 28},
+    ]
   h.script(src='/static/jquery-1.10.2.min.js', charset='utf-8')
   h.script(src='/static/d3.v3.min.js', charset='utf-8')
   h.script('''
@@ -85,12 +91,7 @@ var svg;
 
 $(function() {
 
-data = [
-    {x:23, y:18},
-    {x:99, y:18},
-    {x:23, y:28},
-    {x:99, y:28},
-    ];
+data = %s;
 
 svg = d3.select("svg");
 svg.selectAll("circle")
@@ -102,7 +103,7 @@ svg.selectAll("circle")
     ;
 
 })
-''')
+''' % (data,))
 
 
 def robobo(b):
