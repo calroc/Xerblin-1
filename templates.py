@@ -75,7 +75,7 @@ def display_interpreter(c, (stack, dictionary)):
       f.input(type_='submit', value='interpret')
 
 
-def use_js(h):
+def use_js(h, interpreter):
   data = [
     {'x': 23, 'y': 18},
     {'x': 99, 'y': 18},
@@ -106,7 +106,7 @@ svg.selectAll("circle")
 ''' % (data,))
 
 
-def robobo(b):
+def robobo(b, interpreter):
   b.h3('A DeltaBot')
   b.div(
     id_='viewer',
@@ -115,6 +115,7 @@ def robobo(b):
       width='1000px',
       height='128px',
       )
+  display_interpreter(b, interpreter)
 
 
 def render(interpreter, H=use_js, B=robobo):
@@ -125,11 +126,10 @@ def render(interpreter, H=use_js, B=robobo):
     h.title(title)
     h.meta(charset='utf-8')
     h.link(rel='stylesheet', href='./static/site.css')
-    H(h)
+    H(h, interpreter)
   with ht.body as b:
     b.h1(title)
-    B(b)
-    display_interpreter(b, interpreter)
+    B(b, interpreter)
   return ht
 
 
