@@ -36,3 +36,8 @@ div#interpreter {
 
 }
 
+circle {
+  fill: #ffffff;
+  stroke: #0e0e0e;
+  stroke-width: 1.5px;
+}
