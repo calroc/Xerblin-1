@@ -23,9 +23,10 @@ Run a WSGI server with a World that stores its history in the git repo.
 '''
 from pickle import Unpickler
 from os import getcwd
+from errno import ENOENT
 import logging
 import sys
-from xerblin import World
+from xerblin import World, ROOT
 from gitty import CommitWorldMixin, make_commit_thing
 import wsgiable
 
@@ -37,7 +38,7 @@ SYSTEM_PICKLE = 'system.pickle'
 
 
 class CommitWorld(CommitWorldMixin, World, object):
-    pass
+  pass
 
 
 try:
@@ -51,9 +52,20 @@ try:
         state = up.load()
       except EOFError:
         break
+
 except IOError, e:
-  print e
-  sys.exit(e.errno)
+  if e.errno != ENOENT:
+    print >> sys.stderr, e
+    sys.exit(e.errno)
+
+  elif '-i' in sys.argv or '--init' in sys.argv: # and ENOENT...
+    state = ROOT
+
+  else: # ENOENT but no init flag on command line...
+    print >> sys.stderr, ('No %r file found, '
+                          'try running with "--init" option.' % (SYSTEM_PICKLE,))
+    sys.exit(e.errno)
+
 
 
 # Create a commit_thing to let us save our state to the git repo after
