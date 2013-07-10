@@ -58,9 +58,8 @@ except IOError, e:
     print >> sys.stderr, e
     sys.exit(e.errno)
 
-  elif '-i' in sys.argv or '--init' in sys.argv: # and ENOENT...
+  if '-i' in sys.argv or '--init' in sys.argv: # and ENOENT...
     state = ROOT
-
   else: # ENOENT but no init flag on command line...
     print >> sys.stderr, ('No %r file found, '
                           'try running with "--init" option.' % (SYSTEM_PICKLE,))
