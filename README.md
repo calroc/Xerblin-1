@@ -37,20 +37,22 @@ With a rich set of basic commands and the three kinds of compound commands you h
 
 ## Installation
 
-The Xerblin system doesn't really require installation. The only dependency is Dulwich (a pure-Python Git library) and I've included a copy of v0.9.0 which will be used by the `run.py` script (via Python `zipimport` facility) so once you have cloned the repo you can just start the server:
-
+The Xerblin system doesn't really require installation. You can run the `wsgiable.py` script to start a Xerblin server with no storage to git:
 
     sforman@callix:~$ git clone git@github.com:PhoenixBureau/Xerblin.git
-    (virt-env)sforman@callix:~$ cd Xerblin/
-    (virt-env)sforman@callix:~/Xerblin$ ./wsgiable.py
+    sforman@callix:~$ cd Xerblin/
+    sforman@callix:~/Xerblin$ ./wsgiable.py
     Serving on port 8000...
+
+
+Or you can use the `run.py` script which does the same thing but saves the state of the interpreter into a git commit after each command. The only dependency is Dulwich (a pure-Python Git library) and I've included a copy of v0.9.0 which will be used by the `run.py` script (via Python `zipimport` facility) so once you have cloned the repo you can just start the server.
 
 
 ### Persistent Xerblin
 
 There are *two* entry points to the server, `wsgiable.py` which runs a Xerblin interpreter in the server but does _not_ store the history to disk, and `run.py` which _does_ store history to disk and uses the Dulwich git library to store the history in the git repository.
 
-If you use the `run.py` entry point it uses the local repo to store system state. You will soon be able to clone the system to another directory to make additional copies, or create branches.
+If you use the `run.py` entry point it uses the local repo to store system state. You will soon be able to clone the system to another directory from within the interpreter to make additional copies.
 
 Basically this gives you an on-disk persistent data structure that captures the entire history of your interaction with the interpreter.  Soon I will implement ways to "cherry pick" data and commands from past history so you can build new interpreter state that contains just the data and commands you want for a particular task.
 
