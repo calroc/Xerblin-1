@@ -22,17 +22,23 @@ from xerblin import items
 from html import HTML
 
 
-def D(c, dictionary):
-  for name, value in items(dictionary):
-    with c.form(
-      id_=name + '_form',
-      action='/step',
-      method='POST',
-      class_='dictionary_word',
-      ) as f:
-      f.input(type_='text', name='command', value=name, style='display:none')
-      f.input(type_='submit', value=name)
+def commit_list(commits):
+  ht = HTML()
+  with ht.head as h:
+    h.title('Available Worlds')
+    h.meta(charset='utf-8')
+  with ht.body as b:
+    b.h1('Available Worlds')
+    for commit in commits:
+      b.div.a(commit, href=commit)
+  return ht
 
+
+def D(c, dictionary):
+  for name, _ in items(dictionary):
+    a = c.a(href='./' + name, class_='dictionary_word')
+    a += '[' + name + ']'
+    c += ' '
 
 def S(c, stack):
   while stack:
@@ -63,7 +69,7 @@ def display_interpreter(c, (stack, dictionary)):
   c.div(style='clear:both')
   with c.div(id_='interpreter') as d:
     d.h3('Interpreter')
-    with d.form(action='/step', method='POST') as f:
+    with d.form(action='./interpret', method='POST') as f:
       f.input(name='command', type_='text')
       f.input(type_='submit', value='interpret')
 
