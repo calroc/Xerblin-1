@@ -19,8 +19,9 @@
 #    along with Xerblin.  If not, see <http://www.gnu.org/licenses/>.
 #
 import logging
+from os.path import join
 from time import time
-from pickle import Unpickler, dumps
+from pickle import Unpickler, dump
 from StringIO import StringIO
 import sys
 sys.path.insert(0, './dulwich-0.9.0.zip/dulwich-0.9.0')
@@ -41,30 +42,13 @@ class WorldCache(object):
       for commit in self.repo.revision_history(self.repo.head())
       )
 
-  def commit_new(self, parent_sha, I, pickle_name='system.pickle'):
-    parent = self.commits[parent_sha]
-    blob = Blob.from_string(dumps(I))
-    tree = Tree()
-    tree.add(pickle_name, self._mode, blob.id)
-    commit = Commit()
-    self._prep_commit(commit, tree, parent_sha)
-    a = self.repo.object_store.add_object
-    a(blob) ; a(tree) ; a(commit)
-
-    sha = commit.id
-#    self.repo.refs['refs/heads/master'] = sha
-    self.cache[sha, pickle_name] = I
-    self.commits[sha] = commit
-    return sha
-
-  def _prep_commit(self, commit, tree, parent_sha):
-      commit.parents = [parent_sha]
-      commit.tree = tree.id
-      commit.author = commit.committer = 'Non <non@xerblin.org>'
-      commit.commit_time = commit.author_time = int(time())
-      commit.commit_timezone = commit.author_timezone = parse_timezone('-0200')[0]
-      commit.encoding = 'UTF-8'
-      commit.message = 'auto-commit'
+  def commit_new(self, I, pickle_name='system.pickle'):
+    with open(join(self.path, pickle_name), 'wb') as pickly:
+      dump(I, pickly)
+    self.repo.stage([pickle_name])
+    commit_sha = self.repo.do_commit('autosave')
+    self.cache[commit_sha, pickle_name] = I
+    return commit_sha
 
   def commit_list(self):
     return self.commits.keys()
@@ -136,4 +120,4 @@ def make_commit_thing(path, files):
 ##  wc = WorldCache()
 ##  sha = wc.commit_list()[2]
 ##  I = wc.get_pickle_from_sha(sha)
-##  ooo = wc.commit_new(sha, I)
+##  ooo = wc.commit_new(I)
