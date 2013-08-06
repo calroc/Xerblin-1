@@ -1,5 +1,3 @@
-from pickle import Unpickler
-from StringIO import StringIO
 from traceback import format_exc
 from wsgiref.simple_server import make_server
 import sys
@@ -11,20 +9,7 @@ from xerblin import interpret
 
 
 pickle_name = 'system.pickle'
-cache = {}
-
-
-def load_latest_state(data):
-  load = Unpickler(StringIO(data)).load
-  # Pull out all the sequentially saved state, command, state, ... data.
-  # This loop will break after the last saved state is loaded leaving
-  # the last saved state in the 'state' variable
-  while True:
-    try:
-      state = load()
-    except EOFError:
-      break
-  return state
+cache = WorldCache()
 
 
 def start(start_response, message, mime_type):
@@ -55,7 +40,7 @@ def x(environ, start_response):
   path = environ['PATH_INFO'].lstrip('/').split('/', 1)
 
   if path == ['']: # Root
-    return ok200(start_response, commit_list(cache.keys()))
+    return ok200(start_response, commit_list(cache.commit_list()))
 
   sha = path[0]
   if len(sha) != 40:
@@ -63,7 +48,7 @@ def x(environ, start_response):
   if not sha.isalnum():
     raise ValueError('invalid %r' % (sha,))
 
-  I = cache.get(sha)
+  I = cache.get_pickle_from_sha(sha)
   if not I:
     raise ValueError('unknown %r' % (sha,))
 
@@ -87,17 +72,14 @@ def run(app=x, host='', port=8000):
 
 
 if __name__ == '__main__':
-  repo = Repo('.')
-  H = repo.revision_history(repo.head())
 
-  print len(H), 'commits'
-  for c in H:
-    T = repo[c.tree]
-    if pickle_name in T:
-      _, sha = T[pickle_name] # mode is unused
-      cache[c.id] = load_latest_state(repo[sha].data)
-  print len(cache), 'trees'
-
+  print len(cache.commits), 'commits'
+##  for c in H:
+##    T = repo[c.tree]
+##    if pickle_name in T:
+##      _, sha = T[pickle_name] # mode is unused
+##      cache[c.id] = load_latest_state(repo[sha].data)
+##  print len(cache), 'trees'
 
   print "Serving on port http://localhost:8000/ ..."
   run()
