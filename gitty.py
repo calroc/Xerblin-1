@@ -51,7 +51,8 @@ class WorldCache(object):
     a = self.repo.object_store.add_object
     a(blob) ; a(tree) ; a(commit)
 
-    sha = self.repo.refs['refs/heads/master'] = commit.id
+    sha = commit.id
+#    self.repo.refs['refs/heads/master'] = sha
     self.cache[sha, pickle_name] = I
     self.commits[sha] = commit
     return sha
