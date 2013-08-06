@@ -19,16 +19,19 @@
 #    along with Xerblin.  If not, see <http://www.gnu.org/licenses/>.
 #
 import logging
-from pickle import Unpickler
+from time import time
+from pickle import Unpickler, dumps
 from StringIO import StringIO
 import sys
 sys.path.insert(0, './dulwich-0.9.0.zip/dulwich-0.9.0')
 from dulwich.repo import Repo, NotGitRepository
+from dulwich.objects import Blob, Tree, Commit, parse_timezone
 
 
 class WorldCache(object):
 
   cache = {}
+  _mode = 0100644
 
   def __init__(self, path='.'):
     self.path = path
@@ -37,6 +40,30 @@ class WorldCache(object):
       (commit.id, commit)
       for commit in self.repo.revision_history(self.repo.head())
       )
+
+  def commit_new(self, parent_sha, I, pickle_name='system.pickle'):
+    parent = self.commits[parent_sha]
+    blob = Blob.from_string(dumps(I))
+    tree = Tree()
+    tree.add(pickle_name, self._mode, blob.id)
+    commit = Commit()
+    self._prep_commit(commit, tree, parent_sha)
+    a = self.repo.object_store.add_object
+    a(blob) ; a(tree) ; a(commit)
+
+    sha = self.repo.refs['refs/heads/master'] = commit.id
+    self.cache[sha, pickle_name] = I
+    self.commits[sha] = commit
+    return sha
+
+  def _prep_commit(self, commit, tree, parent_sha):
+      commit.parents = [parent_sha]
+      commit.tree = tree.id
+      commit.author = commit.committer = 'Non <non@xerblin.org>'
+      commit.commit_time = commit.author_time = int(time())
+      commit.commit_timezone = commit.author_timezone = parse_timezone('-0200')[0]
+      commit.encoding = 'UTF-8'
+      commit.message = 'auto-commit'
 
   def commit_list(self):
     return self.commits.keys()
@@ -102,3 +129,10 @@ def make_commit_thing(path, files):
 
   return commit
 
+
+
+##if __name__ == '__main__':
+##  wc = WorldCache()
+##  sha = wc.commit_list()[2]
+##  I = wc.get_pickle_from_sha(sha)
+##  ooo = wc.commit_new(sha, I)
