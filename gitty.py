@@ -35,8 +35,9 @@ pickle_name='system.pickle'
 
 class WorldCache(object):
 
-  cache = {}
-  mapping = {}
+  cache = {} # SHAs to interpreters
+  mapping = {} # (SHA, command)s to SHAs
+  reverse_cache = {} # Interpreters to SHAs
   _mode = 0100644
 
   def __init__(self, path='.'):
@@ -47,14 +48,22 @@ class WorldCache(object):
       for commit in self.repo.revision_history(self.repo.head())
       )
 
-  def step(self, sha, I, command):
+  def step(self, sha, command):
     try:
       new_sha = self.mapping[sha, command]
-      print >> sys.stderr, 'cache hit', sha, command, new_sha
+      print >> sys.stderr, 'command mapping hit', sha, command, new_sha
     except KeyError:
-      print >> sys.stderr, 'cache miss', sha, command
+      print >> sys.stderr, 'command mapping miss', sha, command
+      I = self.get_interpreter_from_sha(sha)
       new_I = interpret(I, [command])
-      new_sha = self.mapping[sha, command] = self.commit_new(new_I, sha)
+      new_sha = self.mapping[sha, command] = self.check_for_prev_I(new_I, sha)
+    return new_sha
+
+  def check_for_prev_I(self, I, sha):
+    try:
+      new_sha = self.reverse_cache[I]
+    except KeyError:
+      new_sha = self.reverse_cache[I] = self.commit_new(I, sha)
     return new_sha
 
   def commit_new(self, I, sha):
@@ -69,13 +78,15 @@ class WorldCache(object):
     return self.commits.keys()
 
   def get_interpreter_from_sha(self, sha):
+    try: return self.cache[sha]
+    except KeyError: pass
     try:
       commit = self.commits[sha]
     except KeyError:
       commit = self.commits[sha] = self.repo[sha]
-    return self.get_pickle_from_commit(commit)
+    return self.get_interpreter_from_commit(commit)
 
-  def get_pickle_from_commit(self, commit):
+  def get_interpreter_from_commit(self, commit):
     try:
       return self.cache[commit.id]
     except KeyError:

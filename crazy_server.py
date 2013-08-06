@@ -47,16 +47,15 @@ def x(environ, start_response):
   if not sha.isalnum():
     raise ValueError('invalid %r' % (sha,))
 
-  I = cache.get_interpreter_from_sha(sha)
-
-  if len(path) == 1: # Just render the current state.
+  if len(path) == 1: # Just render the state.
+    I = cache.get_interpreter_from_sha(sha)
     return ok200(start_response, render(I, sha))
 
   command = path[1]
   if not command.replace('_', '').isalnum():
     raise ValueError('invalid %r' % (command,))
 
-  new_sha = cache.step(sha, I, command)
+  new_sha = cache.step(sha, command)
 
   start_response('301 Redirect', [('Location', '/' + new_sha)])
   return []
@@ -68,15 +67,7 @@ def run(app=x, host='', port=8000):
 
 
 if __name__ == '__main__':
-
   print len(cache.commits), 'commits'
-##  for c in H:
-##    T = repo[c.tree]
-##    if pickle_name in T:
-##      _, sha = T[pickle_name] # mode is unused
-##      cache[c.id] = load_latest_state(repo[sha].data)
-##  print len(cache), 'trees'
-
   print "Serving on port http://localhost:8000/ ..."
   run()
 
