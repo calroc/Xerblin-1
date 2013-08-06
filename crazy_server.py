@@ -5,8 +5,10 @@ sys.path.insert(0, './dulwich-0.9.0.zip/dulwich-0.9.0')
 from dulwich.repo import Repo, NotGitRepository
 from gitty import WorldCache
 from templates import render, commit_list
+from build_map import load_map
 
 
+factor_map = dict(load_map())
 pickle_name = 'system.pickle'
 cache = WorldCache()
 

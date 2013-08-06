@@ -18,6 +18,12 @@ def process_commits(repo, sort_key=attrgetter('commit_time')):
     yield commit.id, load_latest_state(blob.data)
 
 
+def load_map(filename='map'):
+  for line in open(filename):
+    source, _, destination = line.split()
+    yield source, destination
+
+
 if __name__ == '__main__':
   repo = Repo('.')
   I2SHA = {}
