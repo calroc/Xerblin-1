@@ -33,6 +33,17 @@ from xerblin import interpret
 pickle_name='system.pickle'
 
 
+def load_latest_state(data):
+  load = Unpickler(StringIO(data)).load
+  state = None
+  while True:
+    try:
+      state = load()
+    except EOFError:
+      break
+  return state
+
+
 class WorldCache(object):
 
   cache = {} # SHAs to interpreters
@@ -93,21 +104,8 @@ class WorldCache(object):
       pass
     print >> sys.stderr, 'cache miss', commit, pickle_name
     sha = self.repo[commit.tree][pickle_name][1]
-    I = self.cache[commit.id] = self.load_latest_state(self.repo[sha].data)
+    I = self.cache[commit.id] = load_latest_state(self.repo[sha].data)
     return I
-
-  def load_latest_state(self, data):
-    load = Unpickler(StringIO(data)).load
-    # Pull out all the sequentially saved state, command, state, ... data.
-    # This loop will break after the last saved state is loaded leaving
-    # the last saved state in the 'state' variable
-    state = None
-    while True:
-      try:
-        state = load()
-      except EOFError:
-        break
-    return state
 
 
 class CommitWorldMixin(object):
