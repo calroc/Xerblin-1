@@ -47,23 +47,19 @@ def x(environ, start_response):
   if not sha.isalnum():
     raise ValueError('invalid %r' % (sha,))
 
-  I = cache.get_pickle_from_sha(sha, pickle_name)
-  if not I:
-    raise ValueError('unknown %r' % (sha,))
+  I = cache.get_interpreter_from_sha(sha)
 
   if len(path) == 1: # Just render the current state.
     return ok200(start_response, render(I, sha))
 
   command = path[1]
-  if not command.isalnum():
+  if not command.replace('_', '').isalnum():
     raise ValueError('invalid %r' % (command,))
 
-  new_I, new_sha = cache.step(sha, I, command)
+  new_sha = cache.step(sha, I, command)
 
-  return ok200(start_response, render(I, new_sha))
-
-##  start_response('501 Not Implemented', [('Content-type', 'text/plain')])
-##  return ["D'oh! 501 Not Implemented ", repr(environ['PATH_INFO'])]
+  start_response('301 Redirect', [('Location', '/' + new_sha)])
+  return []
 
 
 def run(app=x, host='', port=8000):

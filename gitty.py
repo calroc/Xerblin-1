@@ -30,6 +30,9 @@ from dulwich.objects import Blob, Tree, Commit, parse_timezone
 from xerblin import interpret
 
 
+pickle_name='system.pickle'
+
+
 class WorldCache(object):
 
   cache = {}
@@ -46,41 +49,40 @@ class WorldCache(object):
 
   def step(self, sha, I, command):
     try:
-      new_I, new_sha = self.mapping[sha, command]
+      new_sha = self.mapping[sha, command]
+      print >> sys.stderr, 'cache hit', sha, command, new_sha
     except KeyError:
       print >> sys.stderr, 'cache miss', sha, command
       new_I = interpret(I, [command])
-      new_sha = self.commit_new(new_I)
-      self.mapping[sha, command] = new_I, new_sha
-    return new_I, new_sha
+      new_sha = self.mapping[sha, command] = self.commit_new(new_I, sha)
+    return new_sha
 
-  def commit_new(self, I, pickle_name='system.pickle'):
+  def commit_new(self, I, sha):
     with open(join(self.path, pickle_name), 'wb') as pickly:
       dump(I, pickly)
     self.repo.stage([pickle_name])
-    commit_sha = self.repo.do_commit('autosave')
-    self.cache[commit_sha, pickle_name] = I
+    commit_sha = self.repo.do_commit('autosave from %r' % (sha,))
+    self.cache[commit_sha] = I
     return commit_sha
 
   def commit_list(self):
     return self.commits.keys()
 
-  def get_pickle_from_sha(self, sha, pickle_name='system.pickle'):
+  def get_interpreter_from_sha(self, sha):
     try:
       commit = self.commits[sha]
     except KeyError:
       commit = self.commits[sha] = self.repo[sha]
-    return self.get_pickle_from_commit(commit, pickle_name)
+    return self.get_pickle_from_commit(commit)
 
-  def get_pickle_from_commit(self, commit, pickle_name='system.pickle'):
-    key = commit.id, pickle_name
+  def get_pickle_from_commit(self, commit):
     try:
-      return self.cache[key]
+      return self.cache[commit.id]
     except KeyError:
       pass
     print >> sys.stderr, 'cache miss', commit, pickle_name
-    _, sha = self.repo[commit.tree][pickle_name] # mode is unused
-    I = self.cache[key] = self.load_latest_state(self.repo[sha].data)
+    sha = self.repo[commit.tree][pickle_name][1]
+    I = self.cache[commit.id] = self.load_latest_state(self.repo[sha].data)
     return I
 
   def load_latest_state(self, data):
