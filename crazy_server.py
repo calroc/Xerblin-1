@@ -26,9 +26,18 @@ def load_latest_state(data):
   return state
 
 
+def start(start_response, message, mime_type):
+  start_response(message, [('Content-type', mime_type)])
+
+
 def err500(start_response, message):
-  start_response('500 Internal Server Error', [('Content-type', 'text/plain')])
-  return [message]
+  start(start_response, '500 Internal Server Error', 'text/plain')
+  return [str(message)]
+
+
+def ok200(start_response, response):
+  start(start_response, '200 OK', 'text/html')
+  return response
 
 
 def report_problems(f):
@@ -45,8 +54,7 @@ def x(environ, start_response):
   path = environ['PATH_INFO'].lstrip('/').split('/', 1)
 
   if path == ['']: # Root
-    start_response('200 OK', [('Content-type', 'text/html')])
-    return commit_list(cache.keys())
+    return ok200(start_response, commit_list(cache.keys()))
 
   sha = path[0]
   if len(sha) != 40:
@@ -59,16 +67,14 @@ def x(environ, start_response):
     raise ValueError('unknown %r' % (sha,))
 
   if len(path) == 1: # Just render the current state.
-    start_response('200 OK', [('Content-type', 'text/html')])
-    return render(I, sha)
+    return ok200(start_response, render(I))
 
   command = path[1]
   if not command.isalnum():
     raise ValueError('invalid %r' % (command,))
 
   I = interpret(I, [command])
-  start_response('200 OK', [('Content-type', 'text/html')])
-  return render(I)
+  return ok200(start_response, render(I))
 
 ##  start_response('501 Not Implemented', [('Content-type', 'text/plain')])
 ##  return ["D'oh! 501 Not Implemented ", repr(environ['PATH_INFO'])]
