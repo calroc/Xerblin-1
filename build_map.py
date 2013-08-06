@@ -18,14 +18,8 @@ def process_commits(repo, sort_key=attrgetter('commit_time')):
     yield commit.id, load_latest_state(blob.data)
 
 
-def load_map(filename='map'):
-  for line in open(filename):
-    source, _, destination = line.split()
-    yield source, destination
-
-
-if __name__ == '__main__':
-  repo = Repo('.')
+def load_map(path='.'):
+  repo = Repo(path)
   I2SHA = {}
   for sha, I in process_commits(repo):
     try:
@@ -33,4 +27,9 @@ if __name__ == '__main__':
     except KeyError:
       I2SHA[I] = sha
     else:
-      print sha, '->', seen_sha
+      yield sha, seen_sha
+
+
+if __name__ == '__main__':
+  for sha, seen_sha in load_map():
+    print sha, '->', seen_sha
