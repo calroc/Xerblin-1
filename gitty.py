@@ -19,9 +19,58 @@
 #    along with Xerblin.  If not, see <http://www.gnu.org/licenses/>.
 #
 import logging
+from pickle import Unpickler
+from StringIO import StringIO
 import sys
 sys.path.insert(0, './dulwich-0.9.0.zip/dulwich-0.9.0')
 from dulwich.repo import Repo, NotGitRepository
+
+
+class WorldCache(object):
+
+  cache = {}
+
+  def __init__(self, path='.'):
+    self.path = path
+    self.repo = Repo(path)
+    self.commits = dict(
+      (commit.id, commit)
+      for commit in self.repo.revision_history(self.repo.head())
+      )
+
+  def commit_list(self):
+    return self.commits.keys()
+
+  def get_pickle_from_sha(self, sha, pickle_name='system.pickle'):
+    try:
+      commit = self.commits[sha]
+    except KeyError:
+      commit = self.commits[sha] = self.repo[sha]
+    return self.get_pickle_from_commit(commit, pickle_name)
+
+  def get_pickle_from_commit(self, commit, pickle_name='system.pickle'):
+    key = commit.id, pickle_name
+    try:
+      return self.cache[key]
+    except KeyError:
+      pass
+    print >> sys.stderr, 'cache miss', commit, pickle_name
+    _, sha = self.repo[commit.tree][pickle_name] # mode is unused
+    I = self.cache[key] = self.load_latest_state(self.repo[sha].data)
+    return I
+
+  def load_latest_state(self, data):
+    load = Unpickler(StringIO(data)).load
+    # Pull out all the sequentially saved state, command, state, ... data.
+    # This loop will break after the last saved state is loaded leaving
+    # the last saved state in the 'state' variable
+    state = None
+    while True:
+      try:
+        state = load()
+      except EOFError:
+        break
+    return state
 
 
 class CommitWorldMixin(object):
