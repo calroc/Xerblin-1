@@ -27,11 +27,13 @@ import sys
 sys.path.insert(0, './dulwich-0.9.0.zip/dulwich-0.9.0')
 from dulwich.repo import Repo, NotGitRepository
 from dulwich.objects import Blob, Tree, Commit, parse_timezone
+from xerblin import interpret
 
 
 class WorldCache(object):
 
   cache = {}
+  mapping = {}
   _mode = 0100644
 
   def __init__(self, path='.'):
@@ -41,6 +43,16 @@ class WorldCache(object):
       (commit.id, commit)
       for commit in self.repo.revision_history(self.repo.head())
       )
+
+  def step(self, sha, I, command):
+    try:
+      new_I, new_sha = self.mapping[sha, command]
+    except KeyError:
+      print >> sys.stderr, 'cache miss', sha, command
+      new_I = interpret(I, [command])
+      new_sha = self.commit_new(new_I)
+      self.mapping[sha, command] = new_I, new_sha
+    return new_I, new_sha
 
   def commit_new(self, I, pickle_name='system.pickle'):
     with open(join(self.path, pickle_name), 'wb') as pickly:

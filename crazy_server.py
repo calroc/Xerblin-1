@@ -5,7 +5,6 @@ sys.path.insert(0, './dulwich-0.9.0.zip/dulwich-0.9.0')
 from dulwich.repo import Repo, NotGitRepository
 from gitty import WorldCache
 from templates import render, commit_list
-from xerblin import interpret
 
 
 pickle_name = 'system.pickle'
@@ -59,8 +58,9 @@ def x(environ, start_response):
   if not command.isalnum():
     raise ValueError('invalid %r' % (command,))
 
-  I = interpret(I, [command])
-  return ok200(start_response, render(I))
+  new_I, new_sha = cache.step(sha, I, command)
+
+  return ok200(start_response, render(I, new_sha))
 
 ##  start_response('501 Not Implemented', [('Content-type', 'text/plain')])
 ##  return ["D'oh! 501 Not Implemented ", repr(environ['PATH_INFO'])]
