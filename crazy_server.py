@@ -53,7 +53,7 @@ def x(environ, start_response):
     raise ValueError('unknown %r' % (sha,))
 
   if len(path) == 1: # Just render the current state.
-    return ok200(start_response, render(I))
+    return ok200(start_response, render(I, sha))
 
   command = path[1]
   if not command.isalnum():

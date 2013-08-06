@@ -34,9 +34,9 @@ def commit_list(commits):
   return ht
 
 
-def D(c, dictionary):
+def D(c, dictionary, sha):
   for name, _ in items(dictionary):
-    a = c.a(href='./' + name, class_='dictionary_word')
+    a = c.a(href='/%s/%s' % (sha, name), class_='dictionary_word')
     a += '[' + name + ']'
     c += ' '
 
@@ -59,13 +59,13 @@ def stack_item(c, item):
     c.li(str(item))
 
 
-def display_interpreter(c, (stack, dictionary)):
+def display_interpreter(c, (stack, dictionary), sha):
   with c.div(id_='stack') as s:
     s.h3('Stack of Data')
     S(s.ul, stack)
   with c.div(id_='dictionary') as d:
     d.h3('Dictionary of Commands')
-    D(d.div, dictionary)
+    D(d.div, dictionary, sha)
   c.div(style='clear:both')
   with c.div(id_='interpreter') as d:
     d.h3('Interpreter')
@@ -74,7 +74,7 @@ def display_interpreter(c, (stack, dictionary)):
       f.input(type_='submit', value='interpret')
 
 
-def render(interpreter):
+def render(interpreter, sha='step'):
   ht = HTML()
   with ht.head as h:
     h.title('Xerblin Demo Page')
@@ -82,7 +82,7 @@ def render(interpreter):
     h.link(rel='stylesheet', href='./static/site.css')
   with ht.body as b:
     b.h1('Xerblin')
-    display_interpreter(b, interpreter)
+    display_interpreter(b, interpreter, sha)
   return ht
 
 
