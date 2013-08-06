@@ -48,7 +48,7 @@ def x(environ, start_response):
   if not sha.isalnum():
     raise ValueError('invalid %r' % (sha,))
 
-  I = cache.get_pickle_from_sha(sha)
+  I = cache.get_pickle_from_sha(sha, pickle_name)
   if not I:
     raise ValueError('unknown %r' % (sha,))
 
