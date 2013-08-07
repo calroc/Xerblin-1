@@ -4,7 +4,7 @@ import sys
 sys.path.insert(0, './dulwich-0.9.0.zip/dulwich-0.9.0')
 from dulwich.repo import Repo, NotGitRepository
 from gitty import WorldCache
-from templates import render, commit_list
+from html import render, commit_list
 
 
 cache = WorldCache()
