@@ -152,7 +152,7 @@ def render(interpreter, sha='step'):
     h.meta(charset='utf-8')
     h.link(rel='stylesheet', href='./static/site.css')
   with ht.body as b:
-    b.h1('Xerblin')
+    b.h1.a('Xerblin', href='/')
     display_interpreter(b, interpreter, sha)
   return ht
 
