@@ -7,7 +7,6 @@ from gitty import WorldCache
 from templates import render, commit_list
 
 
-pickle_name = 'system.pickle'
 cache = WorldCache()
 
 

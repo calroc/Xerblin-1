@@ -18,16 +18,13 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Xerblin.  If not, see <http://www.gnu.org/licenses/>.
 #
-import logging
 from os.path import join
-from time import time
 from operator import attrgetter
 from pickle import Unpickler, dump
 from StringIO import StringIO
 import sys
 sys.path.insert(0, './dulwich-0.9.0.zip/dulwich-0.9.0')
-from dulwich.repo import Repo, NotGitRepository
-from dulwich.objects import Blob, Tree, Commit, parse_timezone
+from dulwich.repo import Repo
 from xerblin import interpret
 
 
@@ -99,70 +96,3 @@ class WorldCache(object):
     commit_sha = self.repo.do_commit('autosave from %r' % (sha,))
     print >> sys.stderr, "generating new commit", commit_sha
     return commit_sha
-
-
-class CommitWorldMixin(object):
-
-  def __init__(self, *a, **b):
-    self.commit_thing = b.pop('commit_thing')
-    super(CommitWorldMixin, self).__init__(*a, **b)
-
-  def setCurrentState(self, state):
-    super(CommitWorldMixin, self).setCurrentState(state)
-    self.commit_thing()
-
-
-def make_commit_thing(path, files):
-  log = logging.getLogger('COMMIT')
-  try:
-    repo = Repo(path)
-  except NotGitRepository:
-    log.critical("%r isn't a repository!", path)
-    raise ValueError("%r isn't a repository!" % (path,))
-
-  # Note that we bind the args as defaults rather than via a closure so
-  # you can override them later if you want.  (Technically, binding the
-  # values as defaults IS a type of closure, but you know what I mean!)
-  def commit(files=files, repo=repo, log=log):
-    repo.stage(files)
-    commit_sha = repo.do_commit('autosave')
-    log.info('commit %s', commit_sha)
-
-  return commit
-
-
-def process_commits(repo, sort_key=attrgetter('commit_time')):
-  H = repo.revision_history(repo.head())
-  H.sort(key=sort_key)
-  for commit in H:
-    tree = repo[commit.tree]
-    try:
-      blob_mode, blob_sha = tree[pickle_name]
-    except KeyError:
-      continue
-    blob = repo[blob_sha]
-    yield commit.id, load_latest_state(blob.data)
-
-
-def load_map(path='.'):
-  repo = Repo(path)
-  I2SHA = {}
-  for sha, I in process_commits(repo):
-    try:
-      seen_sha = I2SHA[I]
-    except KeyError:
-      I2SHA[I] = sha
-    else:
-      yield sha, seen_sha
-
-
-if __name__ == '__main__':
-  for sha, seen_sha in load_map():
-    print sha, '->', seen_sha
-
-
-##if __name__ == '__main__':
-##  wc = WorldCache()
-##  sha = wc.commit_list()[2]
-##  I = wc.get_pickle_from_sha(sha)
-##  ooo = wc.commit_new(I)
