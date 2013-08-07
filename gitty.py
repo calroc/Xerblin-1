@@ -32,6 +32,7 @@ from xerblin import interpret
 
 
 pickle_name='system.pickle'
+sort_key = attrgetter('commit_time')
 
 
 def load_latest_state(data):
@@ -74,7 +75,7 @@ class WorldCache(object):
     return self.cache[sha]
 
   def commit_list(self):
-    return self.commits.keys()
+    return self.cache.keys()
 
   def step(self, sha, command):
     I = self.get_interpreter_from_sha(sha)
