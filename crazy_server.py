@@ -5,10 +5,8 @@ sys.path.insert(0, './dulwich-0.9.0.zip/dulwich-0.9.0')
 from dulwich.repo import Repo, NotGitRepository
 from gitty import WorldCache
 from templates import render, commit_list
-from build_map import load_map
 
 
-factor_map = dict(load_map())
 pickle_name = 'system.pickle'
 cache = WorldCache()
 
@@ -69,7 +67,7 @@ def run(app=x, host='', port=8000):
 
 
 if __name__ == '__main__':
-  print len(cache.commits), 'commits'
+  print len(cache.cache), 'previous states'
   print "Serving on port http://localhost:8000/ ..."
   run()
 

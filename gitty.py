@@ -21,6 +21,7 @@
 import logging
 from os.path import join
 from time import time
+from operator import attrgetter
 from pickle import Unpickler, dump
 from StringIO import StringIO
 import sys
@@ -47,34 +48,47 @@ def load_latest_state(data):
 class WorldCache(object):
 
   cache = {} # SHAs to interpreters
-  mapping = {} # (SHA, command)s to SHAs
   reverse_cache = {} # Interpreters to SHAs
   _mode = 0100644
 
   def __init__(self, path='.'):
     self.path = path
-    self.repo = Repo(path)
-    self.commits = dict(
-      (commit.id, commit)
-      for commit in self.repo.revision_history(self.repo.head())
-      )
+    self.repo = repo = Repo(path)
+    H = [
+      commit
+      for commit in repo.revision_history(repo.head())
+      if pickle_name in repo[commit.tree]
+      ]
+    H.sort(key=sort_key)
+    for commit in H:
+      I = load_latest_state(repo[repo[commit.tree][pickle_name][1]].data)
+
+      try: seen_sha = self.reverse_cache[I]
+      except KeyError: pass
+      else: I = self.cache[seen_sha] # reuse the seen interpreter to save memory.
+
+      self.cache[commit.id] = I
+      self.reverse_cache[I] = commit.id
+
+  def get_interpreter_from_sha(self, sha):
+    return self.cache[sha]
+
+  def commit_list(self):
+    return self.commits.keys()
 
   def step(self, sha, command):
-    try:
-      new_sha = self.mapping[sha, command]
-      print >> sys.stderr, 'command mapping hit', sha, command, new_sha
-    except KeyError:
-      print >> sys.stderr, 'command mapping miss', sha, command
-      I = self.get_interpreter_from_sha(sha)
-      new_I = interpret(I, [command])
-      new_sha = self.mapping[sha, command] = self.check_for_prev_I(new_I, sha)
+    I = self.get_interpreter_from_sha(sha)
+    new_I = interpret(I, [command])
+    new_sha = self.check_for_prev_I(new_I, sha)
     return new_sha
 
   def check_for_prev_I(self, I, sha):
     try:
       new_sha = self.reverse_cache[I]
     except KeyError:
-      new_sha = self.reverse_cache[I] = self.commit_new(I, sha)
+      new_sha = self.commit_new(I, sha)
+      self.reverse_cache[I] = new_sha
+      self.cache[new_sha] = I
     return new_sha
 
   def commit_new(self, I, sha):
@@ -82,30 +96,8 @@ class WorldCache(object):
       dump(I, pickly)
     self.repo.stage([pickle_name])
     commit_sha = self.repo.do_commit('autosave from %r' % (sha,))
-    self.cache[commit_sha] = I
+    print >> sys.stderr, "generating new commit", commit_sha
     return commit_sha
-
-  def commit_list(self):
-    return self.commits.keys()
-
-  def get_interpreter_from_sha(self, sha):
-    try: return self.cache[sha]
-    except KeyError: pass
-    try:
-      commit = self.commits[sha]
-    except KeyError:
-      commit = self.commits[sha] = self.repo[sha]
-    return self.get_interpreter_from_commit(commit)
-
-  def get_interpreter_from_commit(self, commit):
-    try:
-      return self.cache[commit.id]
-    except KeyError:
-      pass
-    print >> sys.stderr, 'cache miss', commit, pickle_name
-    sha = self.repo[commit.tree][pickle_name][1]
-    I = self.cache[commit.id] = load_latest_state(self.repo[sha].data)
-    return I
 
 
 class CommitWorldMixin(object):
@@ -137,6 +129,35 @@ def make_commit_thing(path, files):
 
   return commit
 
+
+def process_commits(repo, sort_key=attrgetter('commit_time')):
+  H = repo.revision_history(repo.head())
+  H.sort(key=sort_key)
+  for commit in H:
+    tree = repo[commit.tree]
+    try:
+      blob_mode, blob_sha = tree[pickle_name]
+    except KeyError:
+      continue
+    blob = repo[blob_sha]
+    yield commit.id, load_latest_state(blob.data)
+
+
+def load_map(path='.'):
+  repo = Repo(path)
+  I2SHA = {}
+  for sha, I in process_commits(repo):
+    try:
+      seen_sha = I2SHA[I]
+    except KeyError:
+      I2SHA[I] = sha
+    else:
+      yield sha, seen_sha
+
+
+if __name__ == '__main__':
+  for sha, seen_sha in load_map():
+    print sha, '->', seen_sha
 
 
 ##if __name__ == '__main__':
