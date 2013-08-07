@@ -11,10 +11,9 @@ the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 
-
 ## Summary
 
-Xerblin is a simple conceptual system for reasoning about automated behavior.  It has been implemented in Python and Javascript and this software package contains a simple WSGI server that serves live interactive Xerblin interpreters.
+Xerblin is a simple conceptual system for reasoning about automated behavior.  It has been implemented in Python  and this software package contains a simple WSGI server that serves live interactive Xerblin interpreters.
 
 Xerblin provides a single metaphor for interacting with computers that is simple enough to teach to children yet provides facilities that are useful to programmers. It integrates all levels of software from the desktop to assembly language.
 
@@ -48,28 +47,10 @@ The Xerblin system doesn't really require installation. The only dependency is D
 
 ### Persistent Xerblin
 
-There are *two* entry points to the server, `wsgiable.py` which runs a Xerblin interpreter in the server but does _not_ store the history to disk, and `run.py` which _does_ store history to disk and uses the Dulwich git library to store the history in the git repository.
+The entry point to the server, `run.py`, stores history to disk and uses the Dulwich git library to record changes in the git repository.
 
-If you use the `run.py` entry point it uses the local repo to store system state. You will soon be able to clone the system to another directory to make additional copies, or create branches.
+Basically this gives you an on-disk persistent data structure that captures the entire history of your interaction with the interpreter.
 
-Basically this gives you an on-disk persistent data structure that captures the entire history of your interaction with the interpreter.  Soon I will implement ways to "cherry pick" data and commands from past history so you can build new interpreter state that contains just the data and commands you want for a particular task.
-
-In effect the persistent Xerblin interpreter provides a programmable UI that the average person can quickly and easily learn to use.  Then it provides (potentially) a web-publishable history that can be shared and used as a resource.
-
-
-### Basic Interpreter Usage
-
-The interpreter is very simple.  To use it you type in the entry box and hit return or click the "interpret" button.  The text you typed is split on spaces and then evaluated word-by-word.
-
-*  Numbers such as `23` and `88.8` are put on the stack as numerical values (`int` and `float` object in Python, and whatever JS uses in JS.)
-*  Any text that starts and ends with double quote marks `"` and contains no spaces is put onto the stack as a string (the quotes are stripped.)
-*  Words that aren't numbers or text strings are looked up in the dictionary of commands and then executed.  If a word isn't found or fails the entire command line fails and the interpreter does not change state.
-
-You can create new commands by combining existing commands. I posted [a video on Youtube that shows this process][video_demo].  In the video I create two new commands: `sqr` which squares the number on the stack, and `dropall` which "drops" all the items from the stack clearing it for further use.
-
-[video_demo]: http://calroc.github.com/aum-gravity/Henry.html "Demonstration video embedded in a page that includes the interpreter being demo'd."
-
-I am creating more documentation, but in the meantime, here are some more resources.
 
 ### Some links:
 
