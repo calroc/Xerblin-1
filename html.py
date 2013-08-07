@@ -168,4 +168,3 @@ if __name__ == '__main__':
   with ht.head as h:
     h.title('Bananas')
   print ht
-
