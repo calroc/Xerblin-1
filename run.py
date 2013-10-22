@@ -20,9 +20,6 @@
 #
 from traceback import format_exc
 from wsgiref.simple_server import make_server
-import sys
-sys.path.insert(0, './dulwich-0.9.0.zip/dulwich-0.9.0')
-from dulwich.repo import Repo, NotGitRepository
 from gitty import WorldCache
 from html import render, commit_list
 

@@ -624,8 +624,7 @@ def view(interpreter):
     '''
     Pretty print the interpreter to stdout.
     '''
-    from pprint import pprint as p
-    p(interpreter)
+    pprint.pprint(interpreter)
     return interpreter
 
 
