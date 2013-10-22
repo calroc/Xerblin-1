@@ -41,7 +41,7 @@ The Xerblin system doesn't really require installation. The only dependency is D
 
     sforman@callix:~$ git clone git@github.com:PhoenixBureau/Xerblin.git
     (virt-env)sforman@callix:~$ cd Xerblin/
-    (virt-env)sforman@callix:~/Xerblin$ ./wsgiable.py
+    (virt-env)sforman@callix:~/Xerblin$ ./run.py
     Serving on port 8000...
 
 
