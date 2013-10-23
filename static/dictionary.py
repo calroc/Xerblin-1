@@ -72,3 +72,19 @@ def delete(node, key):
 
     return key, value, delete(lower, key), higher
 
+def items(node):
+    '''
+    Iterate in order over the (key, value) pairs in a tree.
+    '''
+    if not node:
+        return
+
+    key, value, lower, higher = node
+    
+    for kv in items(lower):
+        yield kv
+    
+    yield key, value
+    
+    for kv in items(higher):
+        yield kv

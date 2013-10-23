@@ -2,37 +2,15 @@
 <head>
 <script src="static/brython.js"></script>
 </head>
-<body onload="brython()">
+<body onload="brython(1)">
 <script type="text/python" src="static/stack.py"></script>
 <script type="text/python" src="static/dictionary.py"></script>
-<script type="text/python">
-
-STACK = ()
-
-def pu():
-  global STACK
-  STACK = push(STACK, doc["zone"].value)
-  ist()
-
-def dr():
-  global STACK
-  it, STACK = pop(STACK, 1)
-  doc["zone"].value = it
-  ist()
-
-def ist():
-  doc["display"].innerHTML = str(list(iterStack(STACK)))
-
-def pik():
-  global STACK
-  n = int(doc["zone"].value)
-  it, STACK = pick_(STACK, n)
-  doc["zone"].value = it
-
-ist()
-
-</script>
-<input id="zone"><button onclick="pu()">push!</button><br>
+<script type="text/python" src="static/xerblin_core.py"></script>
+<script type="text/python" src="static/library.py"></script>
+<script type="text/python" src="static/main.py"></script>
+<input id="zone">
+<button onclick="pu()">push!</button><br>
+<button onclick="interp()">INTERPRET!</button><br>
 <button onclick="dr()">drop!</button><br>
 <button onclick="pik()">pick!</button><br>
 <div id="display"></div>
