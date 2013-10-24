@@ -76,7 +76,7 @@ class WorldCache(object):
 
   def step(self, sha, command):
     I = self.get_interpreter_from_sha(sha)
-    new_I = interpret(I, [command])
+    new_I = interpret(I, command)
     new_sha = self.check_for_prev_I(new_I, sha)
     return new_sha
 

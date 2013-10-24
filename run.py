@@ -19,12 +19,14 @@
 #    along with Xerblin.  If not, see <http://www.gnu.org/licenses/>.
 #
 from traceback import format_exc
+from urlparse import parse_qs
 from wsgiref.simple_server import make_server
 from gitty import WorldCache
 from html import render, commit_list
 
 
 cache = WorldCache()
+CSS = open('./static/site.css').read()
 
 
 def start(start_response, message, mime_type):
@@ -36,8 +38,8 @@ def err500(start_response, message):
   return [str(message)]
 
 
-def ok200(start_response, response):
-  start(start_response, '200 OK', 'text/html')
+def ok200(start_response, response, mimetype='text/html'):
+  start(start_response, '200 OK', mimetype)
   return response
 
 
@@ -50,12 +52,26 @@ def report_problems(f):
   return inner
 
 
+def parse_post(environ):
+  try:
+    request_body_size = int(environ.get('CONTENT_LENGTH', 0))
+  except ValueError:
+    request_body_size = 0
+  request_body = environ['wsgi.input'].read(request_body_size)
+  return parse_qs(request_body)['command'][0]
+
+
 @report_problems
 def x(environ, start_response):
   path = environ['PATH_INFO'].lstrip('/').split('/', 1)
 
+  print 'path', path
+
   if path == ['']: # Root
     return ok200(start_response, commit_list(cache.commit_list()))
+
+  if path == ['static', 'site.css']:
+    return ok200(start_response, CSS, 'text/css')
 
   sha = path[0]
   if len(sha) != 40:
@@ -71,6 +87,12 @@ def x(environ, start_response):
   if not command.replace('_', '').isalnum():
     raise ValueError('invalid %r' % (command,))
 
+  if command == 'interpret':
+    command = parse_post(environ).split()
+  else:
+    command = [command]
+
+  print command
   new_sha = cache.step(sha, command)
 
   start_response('301 Redirect', [('Location', '/' + new_sha)])

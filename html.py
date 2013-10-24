@@ -140,7 +140,7 @@ def display_interpreter(c, (stack, dictionary), sha):
   c.div(style='clear:both')
   with c.div(id_='interpreter') as d:
     d.h3('Interpreter')
-    with d.form(action='./interpret', method='POST') as f:
+    with d.form(action='./%s/interpret' % (sha,), method='POST') as f:
       f.input(name='command', type_='text')
       f.input(type_='submit', value='interpret')
 
