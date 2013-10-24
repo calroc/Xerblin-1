@@ -90,7 +90,6 @@ def x(environ, start_response):
   else:
     command = [command]
 
-  print command
   new_sha = cache.step(sha, command)
 
   start_response('301 Redirect', [('Location', '/' + new_sha)])
