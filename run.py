@@ -65,8 +65,6 @@ def parse_post(environ):
 def x(environ, start_response):
   path = environ['PATH_INFO'].lstrip('/').split('/', 1)
 
-  print 'path', path
-
   if path == ['']: # Root
     return ok200(start_response, commit_list(cache.commit_list()))
 
